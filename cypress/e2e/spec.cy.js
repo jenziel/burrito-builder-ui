@@ -46,6 +46,9 @@ describe("Test that our line cooks will recieve every burrito order ticket that 
     cy.get('.order').should('have.length', 3)
     cy.get('.ingredient-list').should('have.length', 3)
     cy.get(".order").first().contains("h3", "Jen");
+    cy.get('[placeholder="Name"]').should('have.attr', 'name', 'name')
+    cy.get('.orderWIP').contains('p', 'Order: Nothing selected')
+
     jensList.forEach(ingredient => {
       cy.get(".ingredient-list").first().contains("li", `${ingredient}`);
     })
@@ -74,9 +77,12 @@ describe("Test that our line cooks will recieve every burrito order ticket that 
     // happy path
     cy.visit("http://localhost:3000/");
     cy.get('input').type('jen').should('have.value', 'jen')
+    cy.get('.orderWIP').contains('p', 'Order: Nothing selected')
     cy.get('.steak-btn').click().should('have.value', 'steak')
+    cy.get('.orderWIP').contains('p', 'Order: steak')
     cy.get('.sofritas-btn').click().should('have.value', 'sofritas')
     cy.get('.beans-btn').click().should('have.value', 'beans')
+    cy.get('.orderWIP').contains('p', 'Order: steak, sofritas, beans')
     cy.get('.submit-btn').click().wait('@postOrder')
       //new order should appear
     cy.get('.order').should('have.length', 4)
