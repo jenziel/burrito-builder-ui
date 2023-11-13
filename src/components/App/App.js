@@ -21,7 +21,7 @@ function App() {
   return (
     <main className="App">
       <header>
-        <h1>Burrito Builder</h1>
+        <h1 className='homepageTitle'>Burrito Builder</h1>
         <OrderForm addOrder={addOrder}/>
       </header>
 

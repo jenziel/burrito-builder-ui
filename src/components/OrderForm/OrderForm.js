@@ -20,6 +20,7 @@ function OrderForm({addOrder}) {
       console.log('form is complete')
       postOrder(newOrder)
       .then(postOrderResult => {
+        console.log(postOrderResult)
         addOrder(postOrderResult);
         clearInputs()
       })
@@ -58,6 +59,7 @@ function OrderForm({addOrder}) {
   const ingredientButtons = possibleIngredients.map((ingredient) => {
     return (
       <button
+      className = {`${ingredient}-btn`}
         key={ingredient}
         name={ingredient}
         value={ingredient}
@@ -81,8 +83,9 @@ function OrderForm({addOrder}) {
       {ingredientButtons}
 
       <p>Order: {ingredients.join(", ") || "Nothing selected"}</p>
-      <div className='errorMessage'>{alert}</div>
-      <button onClick={(event) => handleSubmit(event)}>Submit Order</button>
+      {alert &&
+        <div className='error-message'>{alert}</div>}
+      <button className='submit-btn' onClick={(event) => handleSubmit(event)}>Submit Order</button>
     </form>
   );
 }
