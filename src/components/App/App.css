@@ -15,7 +15,7 @@
   background-repeat: no-repeat;
   background-image: url("../../burritos.jpg");
 }
-.errorMessage {
+.error-message {
   color: darkred;
   margin-bottom: 1rem;
 }

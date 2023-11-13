@@ -83,7 +83,8 @@ function OrderForm({addOrder}) {
       {ingredientButtons}
 
       <p>Order: {ingredients.join(", ") || "Nothing selected"}</p>
-      <div className='errorMessage'>{alert}</div>
+      {alert &&
+        <div className='error-message'>{alert}</div>}
       <button className='submit-btn' onClick={(event) => handleSubmit(event)}>Submit Order</button>
     </form>
   );

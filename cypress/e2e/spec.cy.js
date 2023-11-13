@@ -34,7 +34,7 @@ describe("Test that our line cooks will recieve every burrito order ticket that 
     cy.intercept("GET", "http://localhost:3001/api/v1/orders", {
       status: 200,
       fixture: "orders",
-    });
+    }).as('getOrders');
   });
   it("should display unfulfilled orders on pageload.  There should be a form with buttons for the cashier to enter in new orders", () => {
     cy.visit("http://localhost:3000/");
@@ -64,25 +64,50 @@ describe("Test that our line cooks will recieve every burrito order ticket that 
     cy.intercept("GET", "http://localhost:3001/api/v1/orders", {
       status: 200,
       fixture: "orders",
-    });
+    }).as('getOrders');
     cy.intercept("POST", "http://localhost:3001/api/v1/orders", {
       status: 200,
       fixture: "postResponse",
-    });
+    }).as('postOrder');
   });
   it("should let you add a new order that displays to the dom and gets posted to the API", () => {
-    //happy path
+    // happy path
     cy.visit("http://localhost:3000/");
     cy.get('input').type('jen').should('have.value', 'jen')
     cy.get('.steak-btn').click().should('have.value', 'steak')
     cy.get('.sofritas-btn').click().should('have.value', 'sofritas')
     cy.get('.beans-btn').click().should('have.value', 'beans')
-    cy.get('.submit-btn').click()
+    cy.get('.submit-btn').click().wait('@postOrder')
+      //new order should appear
     cy.get('.order').should('have.length', 4)
     cy.get('.order').last().contains('h3', 'jen')
     cy.get('.order').last().contains('ul', 'steak')
     cy.get('.order').last().contains('ul', 'sofritas')
     cy.get('.order').last().contains('ul', 'beans')
     cy.get('.order').last().should('have.attr', 'id').and('eq', '4')
+      // form should reset
+    cy.get('input').should('have.value', '')
+  });
+  it("shouldn't let you submit an empty form", () => {
+    // sad path
+    cy.visit("http://localhost:3000/");
+      // new order should not appear if missing ingredients
+    cy.get('input').type('jen').should('have.value', 'jen')
+    cy.get('.submit-btn').click()
+    cy.get('.order').should('have.length', 3)
+    cy.get('.error-message').contains('Form is incomplete. All fields need to be filled in.')
+    cy.reload()
+      // new order should not appear if missing name
+    cy.get('.error-message').should('not.exist')
+    cy.get('.steak-btn').click()
+    cy.get('.submit-btn').click()
+    cy.get('.order').should('have.length', 3)
+    cy.get('.error-message').contains('Form is incomplete. All fields need to be filled in.')
+      // error message should disappear after successful post
+      cy.get('input').type('jen').should('have.value', 'jen')
+      cy.get('.sofritas-btn').click().should('have.value', 'sofritas')
+      cy.get('.beans-btn').click().should('have.value', 'beans')
+      cy.get('.submit-btn').click().wait('@postOrder')
+      cy.get('.error-message').should('not.exist')
   });
 });
