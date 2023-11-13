@@ -19,7 +19,11 @@ function postOrder(newOrder)
         throw new Error('Something happened while adding a new order via POST.')
       }
     })
-    .then(response => response.json());
+    .then(response => {
+
+      console.log('raw response', response)
+     return  response.json()
+    })
 }
  
   

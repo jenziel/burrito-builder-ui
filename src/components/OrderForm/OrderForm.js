@@ -20,6 +20,7 @@ function OrderForm({addOrder}) {
       console.log('form is complete')
       postOrder(newOrder)
       .then(postOrderResult => {
+        console.log(postOrderResult)
         addOrder(postOrderResult);
         clearInputs()
       })
@@ -58,6 +59,7 @@ function OrderForm({addOrder}) {
   const ingredientButtons = possibleIngredients.map((ingredient) => {
     return (
       <button
+      className = {`${ingredient}-btn`}
         key={ingredient}
         name={ingredient}
         value={ingredient}

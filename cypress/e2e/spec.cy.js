@@ -59,3 +59,30 @@ describe("Test that our line cooks will recieve every burrito order ticket that 
     })
   });
 });
+describe("Test that our line cooks will recieve every burrito order ticket that goes through", () => {
+  beforeEach(() => {
+    cy.intercept("GET", "http://localhost:3001/api/v1/orders", {
+      status: 200,
+      fixture: "orders",
+    });
+    cy.intercept("POST", "http://localhost:3001/api/v1/orders", {
+      status: 200,
+      fixture: "postResponse",
+    });
+  });
+  it("should let you add a new order that displays to the dom and gets posted to the API", () => {
+    //happy path
+    cy.visit("http://localhost:3000/");
+    cy.get('input').type('jen').should('have.value', 'jen')
+    cy.get('.steak-btn').click().should('have.value', 'steak')
+    cy.get('.sofritas-btn').click().should('have.value', 'sofritas')
+    cy.get('.beans-btn').click().should('have.value', 'beans')
+    cy.get('.submit-btn').click()
+    cy.get('.order').should('have.length', 4)
+    cy.get('.order').last().contains('h3', 'jen')
+    cy.get('.order').last().contains('ul', 'steak')
+    cy.get('.order').last().contains('ul', 'sofritas')
+    cy.get('.order').last().contains('ul', 'beans')
+    cy.get('.order').last().should('have.attr', 'id').and('eq', '4')
+  });
+});
