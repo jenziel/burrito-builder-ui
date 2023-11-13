@@ -1,8 +1,14 @@
 import { useState } from "react";
+import { postOrder } from "../../apiCalls";
 
 function OrderForm({addOrder}) {
   const [name, setName] = useState("");
   const [ingredients, setIngredients] = useState([]);
+  const [alert, setAlert] = useState("");
+
+  const isFormComplete = () => {
+   return !(name === "" || ingredients.length === 0)
+  }
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -10,13 +16,23 @@ function OrderForm({addOrder}) {
       name,
       ingredients
     }
-    addOrder(newOrder)
-    clearInputs();
+    if (isFormComplete()) {
+      console.log('form is complete')
+      postOrder(newOrder)
+      .then(postOrderResult => {
+        addOrder(postOrderResult);
+        clearInputs()
+      })
+      .catch(err => console.error(err));
+    } else {
+      setAlert("Form is incomplete. All fields need to be filled in.")
+    }
   }
 
   function clearInputs() {
     setName("");
     setIngredients([]);
+    setAlert("")
   };
 
   const possibleIngredients = [
@@ -33,10 +49,12 @@ function OrderForm({addOrder}) {
     "cilantro",
     "sour cream",
   ];
+
   function handleIngredientSelection(event){
     event.preventDefault();
     setIngredients([...ingredients, event.target.value])
   }
+
   const ingredientButtons = possibleIngredients.map((ingredient) => {
     return (
       <button
@@ -63,7 +81,7 @@ function OrderForm({addOrder}) {
       {ingredientButtons}
 
       <p>Order: {ingredients.join(", ") || "Nothing selected"}</p>
-
+      <div className='errorMessage'>{alert}</div>
       <button onClick={(event) => handleSubmit(event)}>Submit Order</button>
     </form>
   );

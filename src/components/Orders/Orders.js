@@ -9,7 +9,7 @@ const Orders = ({orders}) => {
         <h3>{name}</h3>
         <ul className="ingredient-list">
           {ingredients.map((ingredient) => {
-            return <li>{ingredient}</li>;
+            return <li >{ingredient}</li>;
           })}
         </ul>
       </div>
